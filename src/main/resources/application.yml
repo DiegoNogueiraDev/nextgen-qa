@@ -1,0 +1,2 @@
+selenium:
+  driver-path: /usr/local/bin/chromedriver

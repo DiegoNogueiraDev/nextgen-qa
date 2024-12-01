@@ -1,0 +1,16 @@
+test_scenario:
+  name: "Teste de Login no LinkedIn"
+  steps:
+    - action: "abrir_página"
+      url: "https://www.linkedin.com/login"
+    - action: "preencher_campo"
+      campo: "username"
+      valor: "seu_usuario"
+    - action: "preencher_campo"
+      campo: "password"
+      valor: "sua_senha"
+    - action: "clicar_botao"
+      botao: "login-button"
+  fallback:
+    - action: "abrir_página"
+      url: "https://www.linkedin.com/login"
