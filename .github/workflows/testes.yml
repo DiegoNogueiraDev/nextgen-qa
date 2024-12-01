@@ -1,0 +1,26 @@
+name: Testes Automatizados
+
+on: [push, pull_request]
+
+jobs:
+  executar-testes:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Instalar Dependências do Maven
+        run: mvn install
+
+      - name: Baixar e Configurar ChromeDriver
+        run: sudo apt-get install -y chromium-chromedriver
+
+      - name: Executar Testes
+        run: mvn exec:java -Dexec.mainClass="com.nextgenqa.core.TestExecutor"

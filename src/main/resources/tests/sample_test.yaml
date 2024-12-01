@@ -1,16 +1,13 @@
-test_scenario:
-  name: "Teste de Login no LinkedIn"
-  steps:
-    - action: "abrir_página"
-      url: "https://www.linkedin.com/login"
-    - action: "preencher_campo"
-      campo: "username"
-      valor: "seu_usuario"
-    - action: "preencher_campo"
-      campo: "password"
-      valor: "sua_senha"
-    - action: "clicar_botao"
-      botao: "login-button"
-  fallback:
-    - action: "abrir_página"
-      url: "https://www.linkedin.com/login"
+testes:
+  - nome: "Teste de Busca no Google"
+    url: "https://www.google.com"
+    acoes:
+      - tipo: "input"
+        seletor: "[name='q']"
+        valor: "NextGen QA"
+      - tipo: "submit"
+        seletor: "[name='btnK']"
+    validacoes:
+      - tipo: "texto"
+        seletor: "h3"
+        esperado: "NextGen QA"
