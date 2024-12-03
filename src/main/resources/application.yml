@@ -1,2 +1,15 @@
-selenium:
-  driver-path: /usr/local/bin/chromedriver
+server:
+  port: 8080  # Porta padrão para a aplicação
+
+spring:
+  application:
+    name: nextgenqa  # Nome da aplicação
+  datasource:
+    url: jdbc:postgresql://localhost:5432/nextgenqa
+    username: nextgen_user
+    password: sua-senha
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update  # Atualiza automaticamente o esquema do banco
+    show-sql: true       # Exibe as consultas SQL no console
