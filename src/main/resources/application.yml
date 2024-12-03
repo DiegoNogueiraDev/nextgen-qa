@@ -13,3 +13,4 @@ spring:
     hibernate:
       ddl-auto: update  # Atualiza automaticamente o esquema do banco
     show-sql: true       # Exibe as consultas SQL no console
+    open-in-view: false  # Desabilita a abertura de sessão do Hibernate automaticamente
