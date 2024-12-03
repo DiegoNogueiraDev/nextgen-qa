@@ -1,0 +1,17 @@
+- name: login_flow
+  steps:
+    - action: click
+      xpath: "//button[@id='login']"
+    - action: input
+      xpath: "//input[@id='username']"
+      value: "admin"
+    - action: input
+      xpath: "//input[@id='password']"
+      value: "password"
+    - action: click
+      xpath: "//button[@id='submit']"
+
+- name: logout_flow
+  steps:
+    - action: click
+      xpath: "//button[@id='logout']"

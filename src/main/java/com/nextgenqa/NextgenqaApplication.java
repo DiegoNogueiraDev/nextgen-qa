@@ -1,17 +1,32 @@
 package com.nextgenqa;
 
+import com.nextgenqa.model.Flow;
+import com.nextgenqa.service.YamlLoaderService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-/**
- * Classe principal para inicializar a aplicação Spring Boot.
- * Marca o ponto de entrada e configura automaticamente o contexto do Spring.
- */
+import java.util.List;
+
 @SpringBootApplication
 public class NextgenqaApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(NextgenqaApplication.class, args);
-        System.out.println("Aplicação NextgenQA iniciada com sucesso!");
+
+        // Teste do carregamento do YAML
+        YamlLoaderService yamlLoaderService = new YamlLoaderService();
+        List<Flow> flows = yamlLoaderService.loadFlows("flows.yaml");
+
+        // Imprime os fluxos carregados
+        for (Flow flow : flows) {
+            System.out.println("Fluxo: " + flow.getName());
+            for (Flow.Step step : flow.getSteps()) {
+                System.out.println(" - Ação: " + step.getAction());
+                System.out.println("   XPath: " + step.getXpath());
+                if (step.getValue() != null) {
+                    System.out.println("   Valor: " + step.getValue());
+                }
+            }
+        }
     }
 }

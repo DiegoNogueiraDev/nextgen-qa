@@ -4,13 +4,5 @@ server:
 spring:
   application:
     name: nextgenqa  # Nome da aplicação
-  datasource:
-    url: jdbc:postgresql://localhost:5432/nextgenqa
-    username: nextgen_user
-    password: sua-senha
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    hibernate:
-      ddl-auto: update  # Atualiza automaticamente o esquema do banco
-    show-sql: true       # Exibe as consultas SQL no console
-    open-in-view: false  # Desabilita a abertura de sessão do Hibernate automaticamente
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration  # Desabilita a configuração automática do DataSource
