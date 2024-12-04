@@ -1,10 +1,21 @@
 - name: contact_form
   steps:
     - action: input
-      xpath: "//input[@id='name']"
-      value: "Test User"
+      xpath: //input[@id='name']
+      value: Test User
     - action: input
-      xpath: "//input[@id='email']"
-      value: "test@example.com"
+      xpath: //input[@id='email']
+      value: test@example.com
     - action: click
-      xpath: "//button[@id='send']"
+      xpath: //button[@id='send']
+
+- name: login_flow
+  steps:
+    - action: input
+      xpath: //input[@id='username']
+      value: admin
+    - action: input
+      xpath: //input[@id='password']
+      value: password
+    - action: click
+      xpath: //button[@id='login']

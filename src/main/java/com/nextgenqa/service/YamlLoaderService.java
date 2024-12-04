@@ -1,24 +1,22 @@
 package com.nextgenqa.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.nextgenqa.model.Flow;
-
+import org.springframework.stereotype.Service;
 import java.io.InputStream;
 import java.util.List;
 
+@Service
 public class YamlLoaderService {
-
-    /**
-     * Carrega os fluxos de um arquivo YAML.
-     *
-     * @param fileName Nome do arquivo YAML.
-     * @return Lista de fluxos carregados.
-     */
     public List<Flow> loadFlows(String fileName) {
-        ObjectMapper mapper = new ObjectMapper(new com.fasterxml.jackson.dataformat.yaml.YAMLFactory());
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName)) {
-            return mapper.readValue(inputStream, new TypeReference<>() {});
+            if (inputStream == null) {
+                throw new RuntimeException("Arquivo YAML não encontrado: " + fileName);
+            }
+
+            ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+            return mapper.readValue(inputStream, mapper.getTypeFactory().constructCollectionType(List.class, Flow.class));
         } catch (Exception e) {
             throw new RuntimeException("Erro ao carregar o arquivo YAML: " + fileName, e);
         }
