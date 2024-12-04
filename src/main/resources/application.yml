@@ -1,5 +1,5 @@
 server:
-  port: 8080  # Porta padrão para a aplicação
+  port: 8001  # Porta padrão para a aplicação
 
 spring:
   application:

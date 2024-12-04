@@ -1,7 +1,8 @@
 package com.nextgenqa.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nextgenqa.model.Flow;
-import org.yaml.snakeyaml.Yaml;
 
 import java.io.InputStream;
 import java.util.List;
@@ -15,9 +16,9 @@ public class YamlLoaderService {
      * @return Lista de fluxos carregados.
      */
     public List<Flow> loadFlows(String fileName) {
-        Yaml yaml = new Yaml();
+        ObjectMapper mapper = new ObjectMapper(new com.fasterxml.jackson.dataformat.yaml.YAMLFactory());
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName)) {
-            return yaml.loadAs(inputStream, List.class);
+            return mapper.readValue(inputStream, new TypeReference<>() {});
         } catch (Exception e) {
             throw new RuntimeException("Erro ao carregar o arquivo YAML: " + fileName, e);
         }

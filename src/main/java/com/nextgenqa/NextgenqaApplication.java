@@ -1,31 +1,39 @@
 package com.nextgenqa;
 
+import com.nextgenqa.executor.FlowExecutor;
 import com.nextgenqa.model.Flow;
 import com.nextgenqa.service.YamlLoaderService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.core.io.ResourceLoader;
 
+import java.io.IOException;
 import java.util.List;
 
 @SpringBootApplication
 public class NextgenqaApplication {
 
-    public static void main(String[] args) {
+    @Autowired
+    private static ResourceLoader resourceLoader;
+
+    public static void main(String[] args) throws IOException {
         SpringApplication.run(NextgenqaApplication.class, args);
 
-        // Teste do carregamento do YAML
+        // Carregar os fluxos
         YamlLoaderService yamlLoaderService = new YamlLoaderService();
         List<Flow> flows = yamlLoaderService.loadFlows("flows.yaml");
 
-        // Imprime os fluxos carregados
+        // Criar o executor
+        FlowExecutor executor = new FlowExecutor();
+
+        // Abrir página local ou pública
+        executor.openUrl(resourceLoader.getResource("classpath:test.html").getURL().toString());
+
+        // Executar o fluxo de formulário
         for (Flow flow : flows) {
-            System.out.println("Fluxo: " + flow.getName());
-            for (Flow.Step step : flow.getSteps()) {
-                System.out.println(" - Ação: " + step.getAction());
-                System.out.println("   XPath: " + step.getXpath());
-                if (step.getValue() != null) {
-                    System.out.println("   Valor: " + step.getValue());
-                }
+            if (flow.getName().equals("contact_form")) {
+                executor.executeFlow(flow);
             }
         }
     }
