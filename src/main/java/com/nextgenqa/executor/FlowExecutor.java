@@ -2,6 +2,8 @@ package com.nextgenqa.executor;
 
 import com.nextgenqa.model.Flow;
 import com.nextgenqa.model.Step;
+import com.nextgenqa.service.FallbackService;
+import com.nextgenqa.service.IAService;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -10,6 +12,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 
@@ -17,9 +20,17 @@ public class FlowExecutor {
 
     private static final Logger logger = LoggerFactory.getLogger(FlowExecutor.class);
     private final WebDriver driver;
+    private final FallbackService fallbackService;
+    private final IAService iaService;
 
-    public FlowExecutor(WebDriver driver) {
+    public FlowExecutor(WebDriver driver, FallbackService fallbackService, IAService iaService) {
         this.driver = driver;
+        this.fallbackService = fallbackService;
+        this.iaService = iaService;
+    }
+
+    private List<String> getFallbacks(Step step) {
+        return fallbackService.getFallbacks(step.getAction(), step.getXPath());
     }
 
     public void openUrl(String url) {
@@ -47,7 +58,7 @@ public class FlowExecutor {
         logger.info("Fluxo '{}' concluído.", flow.getName());
     }
 
-    private boolean executeStepWithFallback(Step step) {
+    private boolean executeStepWithFallback(Step step) throws IOException {
         // Tenta executar o passo principal
         if (executeStep(step)) return true;
 
@@ -59,6 +70,20 @@ public class FlowExecutor {
             logger.info("Tentando fallback: {}", fallbackXpath);
             Step fallbackStep = new Step(step.getAction(), fallbackXpath, step.getValue());
             if (executeStep(fallbackStep)) return true;
+        }
+
+        // Interação com a IA
+        String dom = driver.getPageSource();
+        String iaSuggestion = iaService.generateXPathSuggestion(step.getXPath(), dom);
+
+        if (iaSuggestion != null && !iaSuggestion.isEmpty()) {
+            logger.info("Tentando sugestão da IA: {}", iaSuggestion);
+            Step iaStep = new Step(step.getAction(), iaSuggestion, step.getValue());
+            if (executeStep(iaStep)) {
+                // Atualiza o serviço de fallbacks com a nova sugestão
+                fallbackService.addFallback(step.getAction(), step.getXPath(), iaSuggestion);
+                return true;
+            }
         }
 
         return false;
@@ -90,15 +115,6 @@ public class FlowExecutor {
                     step.getAction(), step.getXPath(), step.getValue(), e.getMessage());
             return false;
         }
-    }
-
-    private List<String> getFallbacks(Step step) {
-        // Busca os fallbacks no banco ou arquivo YAML
-        // Simulação para fins de exemplo:
-        return List.of(
-                step.getXPath().replace("[@id=", "[@name="),  // Exemplo: substitui ID por NAME
-                step.getXPath().replace("input", "textarea") // Exemplo: altera de INPUT para TEXTAREA
-        );
     }
 
     private String getIAFallbackSuggestion(Step step) {

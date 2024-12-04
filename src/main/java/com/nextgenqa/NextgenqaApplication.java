@@ -2,6 +2,8 @@ package com.nextgenqa;
 
 import com.nextgenqa.executor.FlowExecutor;
 import com.nextgenqa.model.Flow;
+import com.nextgenqa.service.FallbackService;
+import com.nextgenqa.service.IAService;
 import com.nextgenqa.service.YamlLoaderService;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -51,7 +53,7 @@ public class NextgenqaApplication implements CommandLineRunner {
         WebDriver driver = null;
         try {
             driver = new ChromeDriver(); // Certifique-se de configurar o driver adequadamente
-            FlowExecutor executor = new FlowExecutor(driver);
+            FlowExecutor executor = new FlowExecutor(driver, new FallbackService(), new IAService());
 
             // Obter o caminho do HTML de teste
             String htmlPath = resourceLoader.getResource("classpath:test.html").getURL().toString();

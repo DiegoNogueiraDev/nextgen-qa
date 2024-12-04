@@ -1,0 +1,15 @@
+fallbacks:
+  - action: "input"
+    xPath: "//input[@id='username']"
+    alternatives:
+      - "//input[@name='username']"
+      - "//textarea[@id='username']"
+      - "//div[@class='username-field']"
+  - action: "click"
+    xPath: "//button[@id='submit']"
+    alternatives:
+      - "//button[@name='submit']"
+      - "//input[@type='submit']"
+
+ia:
+  enabled: true
