@@ -4,6 +4,7 @@ import com.nextgenqa.executor.FlowExecutor;
 import com.nextgenqa.model.Flow;
 import com.nextgenqa.service.FallbackService;
 import com.nextgenqa.service.IAService;
+import com.nextgenqa.service.PythonApiService;
 import com.nextgenqa.service.YamlLoaderService;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -38,6 +39,10 @@ public class NextgenqaApplication implements CommandLineRunner {
     public void run(String... args) throws Exception {
         logger.info("Aplicação NextgenQA iniciada. Carregando fluxos do YAML...");
 
+        // Inicializar o Python API Service
+        PythonApiService pythonApiService = new PythonApiService("src/main/resources/python/api.py");
+        pythonApiService.startPythonServer();
+
         // Carregar fluxos do YAML
         YamlLoaderService yamlLoaderService = new YamlLoaderService();
         List<Flow> flows;
@@ -46,6 +51,7 @@ public class NextgenqaApplication implements CommandLineRunner {
             logger.info("Fluxos carregados com sucesso. Total de fluxos: {}", flows.size());
         } catch (Exception e) {
             logger.error("Erro ao carregar fluxos do arquivo YAML.", e);
+            pythonApiService.stopPythonServer();
             return;
         }
 
@@ -74,20 +80,10 @@ public class NextgenqaApplication implements CommandLineRunner {
             logger.error("Erro ao inicializar o WebDriver ou executar os fluxos.", e);
         } finally {
             if (driver != null) {
-                logger.info("O navegador permanecerá aberto. Feche manualmente se necessário.");
-                Scanner scanner = new Scanner(System.in);
-                logger.info("Deseja fechar o navegador? (sim/não): ");
-                String resposta = scanner.nextLine();
-                if ("sim".equalsIgnoreCase(resposta)) {
-                    driver.quit();
-                    logger.info("Navegador fechado com sucesso.");
-                } else {
-                    logger.info("Navegador permanecerá aberto.");
-                }
-
+                driver.quit();
+                logger.info("WebDriver finalizado.");
             }
+            pythonApiService.stopPythonServer();
         }
     }
-
-
 }
